@@ -250,6 +250,63 @@ describe('modules/datasource/index', () => {
       );
       expect(res).toMatchObject({ releases: [{ version: '1.2.3' }] });
     });
+
+    it('disables default registry fallback when disableDefaultRegistries is true', async () => {
+      datasources.set(datasource, new DummyDatasource());
+      const res = await getPkgReleases({
+        datasource,
+        packageName,
+        disableDefaultRegistries: true,
+      });
+      expect(res).toBeNull();
+    });
+
+    it('uses custom registry even when disableDefaultRegistries is true', async () => {
+      datasources.set(
+        datasource,
+        new DummyDatasource({
+          ...defaultRegistriesMock,
+          'https://custom.com': { releases: [{ version: '2.0.0' }] },
+        }),
+      );
+      const res = await getPkgReleases({
+        datasource,
+        packageName,
+        registryUrls: ['https://custom.com'],
+        disableDefaultRegistries: true,
+      });
+      expect(res).toMatchObject({ releases: [{ version: '2.0.0' }] });
+    });
+
+    it('uses additionalRegistryUrls and skips default registries when disableDefaultRegistries is true', async () => {
+      datasources.set(
+        datasource,
+        new DummyDatasource({
+          ...defaultRegistriesMock,
+          'https://additional.com': { releases: [{ version: '3.0.0' }] },
+        }),
+      );
+      const res = await getPkgReleases({
+        datasource,
+        packageName,
+        additionalRegistryUrls: ['https://additional.com'],
+        disableDefaultRegistries: true,
+      });
+      expect(res).toMatchObject({ releases: [{ version: '3.0.0' }] });
+    });
+
+    it('disables default registry for datasource without customRegistrySupport', async () => {
+      class TestDatasource extends DummyDatasource {
+        override readonly customRegistrySupport = false;
+      }
+      datasources.set(datasource, new TestDatasource());
+      const res = await getPkgReleases({
+        datasource,
+        packageName,
+        disableDefaultRegistries: true,
+      });
+      expect(res).toBeNull();
+    });
   });
 
   describe('Digest', () => {

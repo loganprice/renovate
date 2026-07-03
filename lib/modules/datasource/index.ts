@@ -296,6 +296,7 @@ function resolveRegistryUrls(
   defaultRegistryUrls: string[] | undefined,
   registryUrls: string[] | undefined | null,
   additionalRegistryUrls: string[] | undefined,
+  disableDefaultRegistries?: boolean,
 ): string[] {
   if (!datasource.customRegistrySupport) {
     if (
@@ -313,6 +314,9 @@ function resolveRegistryUrls(
         'Custom registries are not allowed for this datasource and will be ignored',
       );
     }
+    if (disableDefaultRegistries) {
+      return [];
+    }
     return isFunction(datasource.defaultRegistryUrls)
       ? datasource.defaultRegistryUrls()
       : (datasource.defaultRegistryUrls ?? []);
@@ -321,6 +325,8 @@ function resolveRegistryUrls(
   let resolvedUrls: string[] = [];
   if (isNonEmptyArray(customUrls)) {
     resolvedUrls = [...customUrls];
+  } else if (disableDefaultRegistries) {
+    resolvedUrls = [...(additionalRegistryUrls ?? [])];
   } else if (isNonEmptyArray(defaultRegistryUrls)) {
     resolvedUrls = [...defaultRegistryUrls];
     resolvedUrls = resolvedUrls.concat(additionalRegistryUrls ?? []);
@@ -375,6 +381,7 @@ async function fetchReleases(
     config.defaultRegistryUrls,
     registryUrls,
     config.additionalRegistryUrls,
+    config.disableDefaultRegistries,
   );
   let dep: ReleaseResult | null = null;
   const registryStrategy =
@@ -515,6 +522,7 @@ function getDigestConfig(
       config.defaultRegistryUrls,
       config.registryUrls,
       config.additionalRegistryUrls,
+      config.disableDefaultRegistries,
     )[0];
   return { lookupName, packageName, registryUrl, currentValue, currentDigest };
 }

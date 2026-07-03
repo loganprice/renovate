@@ -80,6 +80,13 @@ const options: Readonly<RenovateOptions>[] = [
     globalOnly: true,
   },
   {
+    name: 'disableDefaultRegistries',
+    description:
+      'Set to `true` to disable fallback default registries (such as nuget.org or npmjs.org) if no registries are explicitly configured.',
+    type: 'boolean',
+    default: false,
+  },
+  {
     name: 'mergeConfidenceEndpoint',
     description:
       'If set, Renovate will query this API for Merge Confidence data.',

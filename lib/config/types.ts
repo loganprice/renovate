@@ -95,6 +95,7 @@ export interface RenovateSharedConfig {
   configValidationError?: boolean;
   changelogUrl?: string;
   dependencyDashboardApproval?: boolean;
+  disableDefaultRegistries?: boolean;
   draftPR?: boolean;
   enabled?: boolean;
   enabledManagers?: string[];

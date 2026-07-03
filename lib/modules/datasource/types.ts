@@ -17,6 +17,7 @@ export interface GetDigestInputConfig {
   registryUrl?: string;
   lookupName?: string;
   additionalRegistryUrls?: string[];
+  disableDefaultRegistries?: boolean;
   currentValue?: string;
   currentDigest?: string;
   replacementName?: string;
@@ -50,6 +51,7 @@ export interface GetPkgReleasesConfig {
   defaultRegistryUrls?: string[];
   registryUrls?: string[] | null;
   additionalRegistryUrls?: string[];
+  disableDefaultRegistries?: boolean;
   datasource: string;
   packageName: string;
   currentValue?: string;
